@@ -1,0 +1,50 @@
+import enum
+from datetime import datetime
+
+from sqlalchemy import (
+    Column, Integer, String, Float, Text, Enum, DateTime, ForeignKey
+)
+from sqlalchemy.orm import relationship
+
+from app.config.database import Base
+
+
+class UserRole(str, enum.Enum):
+    STUDENT = "student"
+    HR = "hr"
+
+
+class User(Base):
+    """User domain entity — represents students and HR staff."""
+
+    __tablename__ = "users"
+
+    id: int = Column(Integer, primary_key=True, index=True)
+    email: str = Column(String(255), unique=True, nullable=False, index=True)
+    hashed_password: str = Column(String(255), nullable=False)
+    first_name: str = Column(String(100), nullable=False)
+    last_name: str = Column(String(100), nullable=False)
+    role: UserRole = Column(Enum(UserRole), nullable=False, default=UserRole.STUDENT)
+    avatar: str = Column(String(500), nullable=True)
+
+    # Student-specific fields
+    major: str = Column(String(200), nullable=True)
+    university: str = Column(String(200), nullable=True, default="IPB University")
+    gpa: float = Column(Float, nullable=True)
+
+    # HR-specific fields
+    company_id: int = Column(Integer, ForeignKey("companies.id"), nullable=True)
+
+    created_at: datetime = Column(DateTime, default=datetime.utcnow)
+    updated_at: datetime = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    company = relationship("Company", back_populates="staff")
+    applications = relationship("Application", back_populates="student")
+
+    @property
+    def full_name(self) -> str:
+        return f"{self.first_name} {self.last_name}"
+
+    def __repr__(self) -> str:
+        return f"<User(id={self.id}, email='{self.email}', role='{self.role}')>"

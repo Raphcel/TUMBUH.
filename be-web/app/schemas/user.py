@@ -1,0 +1,65 @@
+from datetime import datetime
+from pydantic import BaseModel, EmailStr, Field
+
+from app.domain.models.user import UserRole
+
+
+# ── Request Schemas ──────────────────────────────────────────
+
+class UserCreate(BaseModel):
+    """Schema for creating a new user (registration)."""
+    email: str = Field(..., example="budi@apps.ipb.ac.id")
+    password: str = Field(..., min_length=8)
+    first_name: str = Field(..., max_length=100)
+    last_name: str = Field(..., max_length=100)
+    role: UserRole = UserRole.STUDENT
+
+    # Student-specific (optional)
+    major: str | None = None
+    university: str | None = "IPB University"
+    gpa: float | None = None
+
+    # HR-specific (optional)
+    company_id: int | None = None
+
+
+class UserUpdate(BaseModel):
+    """Schema for updating user profile."""
+    first_name: str | None = None
+    last_name: str | None = None
+    major: str | None = None
+    gpa: float | None = None
+    avatar: str | None = None
+
+
+class UserLogin(BaseModel):
+    """Schema for login request."""
+    email: str
+    password: str
+
+
+# ── Response Schemas ─────────────────────────────────────────
+
+class UserResponse(BaseModel):
+    """Schema for user data in API responses."""
+    id: int
+    email: str
+    first_name: str
+    last_name: str
+    role: UserRole
+    avatar: str | None = None
+    major: str | None = None
+    university: str | None = None
+    gpa: float | None = None
+    company_id: int | None = None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class TokenResponse(BaseModel):
+    """Schema for authentication token response."""
+    access_token: str
+    token_type: str = "bearer"
+    user: UserResponse
