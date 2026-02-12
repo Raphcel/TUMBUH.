@@ -1,6 +1,14 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, FileText, User, Briefcase, Users, Building, LogOut } from 'lucide-react';
+import {
+  Home,
+  FileText,
+  User,
+  Briefcase,
+  Users,
+  Building,
+  LogOut,
+} from 'lucide-react';
 
 export function Sidebar({ role = 'student' }) {
   const location = useLocation();
@@ -21,19 +29,24 @@ export function Sidebar({ role = 'student' }) {
   const links = role === 'hr' ? hrLinks : studentLinks;
 
   const isActive = (path) => {
-    return location.pathname === path 
-      ? "bg-highlight/30 text-primary font-semibold" 
-      : "text-secondary hover:text-primary hover:bg-highlight/10";
+    return location.pathname === path
+      ? 'bg-white/15 text-white font-semibold'
+      : 'text-white/70 hover:text-white hover:bg-white/10';
   };
 
   return (
-    <div className="flex h-screen flex-col justify-between border-e border-gray-100 bg-white w-64 fixed left-0 top-0 bottom-0 z-40">
+    <div className="flex h-screen flex-col justify-between border-e border-gray-900/10 bg-gradient-to-b from-[#0f2854] to-[#727272] w-64 fixed left-0 top-0 bottom-0 z-40">
       <div className="px-4 py-6">
         <Link to="/" className="flex items-center gap-2 mb-8 px-2">
-            <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center text-white font-bold text-xl">
+          <div className="h-8 w-8 rounded-md bg-white/20 flex items-center justify-center text-white font-bold text-xl">
             T
-            </div>
-            <span className="text-xl font-bold text-primary tracking-tight">Tumbuh <span className="text-xs font-normal text-secondary uppercase ml-1 tracking-wider">{role}</span></span>
+          </div>
+          <span className="text-xl font-bold text-white tracking-tight">
+            Tumbuh{' '}
+            <span className="text-xs font-normal text-white/60 uppercase ml-1 tracking-wider">
+              {role}
+            </span>
+          </span>
         </Link>
 
         <ul className="mt-6 space-y-1">
@@ -43,7 +56,7 @@ export function Sidebar({ role = 'student' }) {
               <li key={link.name}>
                 <Link
                   to={link.path}
-                  className={`flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium ${isActive(link.path)}`}
+                  className={`flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isActive(link.path)}`}
                 >
                   <Icon size={18} />
                   {link.name}
@@ -54,8 +67,8 @@ export function Sidebar({ role = 'student' }) {
         </ul>
       </div>
 
-      <div className="sticky inset-x-0 bottom-0 border-t border-gray-100">
-        <div className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50">
+      <div className="sticky inset-x-0 bottom-0 border-t border-white/10">
+        <div className="flex items-center gap-2 bg-white/5 p-4 hover:bg-white/10">
           <img
             alt="Profile"
             src={`https://ui-avatars.com/api/?name=${role === 'hr' ? 'HR Staff' : 'Student'}&background=random`}
@@ -63,8 +76,8 @@ export function Sidebar({ role = 'student' }) {
           />
 
           <div className="flex-1">
-            <p className="text-xs font-medium text-gray-500">View Profile</p>
-            <div className="flex items-center gap-1 text-xs text-gray-700 pt-1 hover:text-red-500 cursor-pointer">
+            <p className="text-xs font-medium text-white/60">View Profile</p>
+            <div className="flex items-center gap-1 text-xs text-white/70 pt-1 hover:text-red-400 cursor-pointer">
               <LogOut size={12} />
               <span>Logout</span>
             </div>
