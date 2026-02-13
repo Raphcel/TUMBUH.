@@ -5,9 +5,12 @@ from app.config.settings import get_settings
 
 settings = get_settings()
 
+# PostgreSQL connection
 engine = create_engine(
     settings.DATABASE_URL,
-    connect_args={"check_same_thread": False}  # SQLite only
+    pool_size=settings.DB_POOL_SIZE,
+    max_overflow=settings.DB_MAX_OVERFLOW,
+    pool_pre_ping=True,  # verify connections before use
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

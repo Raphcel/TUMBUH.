@@ -14,7 +14,7 @@ class OpportunityRepository(BaseRepository[Opportunity]):
         """Retrieve an opportunity with its company eagerly loaded."""
         return (
             self._db.query(Opportunity)
-            .options(joinedload(Opportunity.company))
+            .options(joinedload(Opportunity.company), joinedload(Opportunity.applications))
             .filter(Opportunity.id == id)
             .first()
         )
@@ -23,6 +23,7 @@ class OpportunityRepository(BaseRepository[Opportunity]):
         """Retrieve all opportunities posted by a specific company."""
         return (
             self._db.query(Opportunity)
+            .options(joinedload(Opportunity.applications))
             .filter(Opportunity.company_id == company_id)
             .offset(skip)
             .limit(limit)
@@ -38,7 +39,10 @@ class OpportunityRepository(BaseRepository[Opportunity]):
         limit: int = 100,
     ) -> list[Opportunity]:
         """Search and filter opportunities."""
-        q = self._db.query(Opportunity).options(joinedload(Opportunity.company))
+        q = self._db.query(Opportunity).options(
+            joinedload(Opportunity.company),
+            joinedload(Opportunity.applications),
+        )
 
         if query:
             search_term = f"%{query}%"

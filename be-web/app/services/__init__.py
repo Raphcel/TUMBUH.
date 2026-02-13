@@ -3,6 +3,8 @@ from app.services.user_service import UserService
 from app.services.company_service import CompanyService
 from app.services.opportunity_service import OpportunityService
 from app.services.application_service import ApplicationService
+from app.services.bookmark_service import BookmarkService
+from app.services.externship_service import ExternshipService
 
 __all__ = [
     "AuthService",
@@ -10,4 +12,6 @@ __all__ = [
     "CompanyService",
     "OpportunityService",
     "ApplicationService",
+    "BookmarkService",
+    "ExternshipService",
 ]

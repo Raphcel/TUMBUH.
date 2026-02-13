@@ -2,6 +2,8 @@ from datetime import datetime
 from pydantic import BaseModel
 
 from app.domain.models.application import ApplicationStatus
+from app.schemas.opportunity import OpportunityResponse
+from app.schemas.user import UserResponse
 
 
 # ── Nested Schemas ───────────────────────────────────────────
@@ -34,6 +36,8 @@ class ApplicationResponse(BaseModel):
     status: ApplicationStatus
     applied_at: datetime
     history: list[StatusHistoryItem] | None = None
+    opportunity: OpportunityResponse | None = None
+    student: UserResponse | None = None
 
     class Config:
         from_attributes = True

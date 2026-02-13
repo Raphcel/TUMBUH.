@@ -12,6 +12,11 @@ class CompanyCreate(BaseModel):
     logo: str | None = None
     description: str | None = None
     website: str | None = None
+    employee_count: int | None = None
+    founded_year: int | None = None
+    linkedin_url: str | None = None
+    instagram_url: str | None = None
+    tagline: str | None = None
 
 
 class CompanyUpdate(BaseModel):
@@ -22,6 +27,11 @@ class CompanyUpdate(BaseModel):
     logo: str | None = None
     description: str | None = None
     website: str | None = None
+    employee_count: int | None = None
+    founded_year: int | None = None
+    linkedin_url: str | None = None
+    instagram_url: str | None = None
+    tagline: str | None = None
 
 
 # ── Response Schemas ─────────────────────────────────────────
@@ -36,6 +46,11 @@ class CompanyResponse(BaseModel):
     description: str | None = None
     website: str | None = None
     rating: float | None = None
+    employee_count: int | None = None
+    founded_year: int | None = None
+    linkedin_url: str | None = None
+    instagram_url: str | None = None
+    tagline: str | None = None
     created_at: datetime
 
     class Config:

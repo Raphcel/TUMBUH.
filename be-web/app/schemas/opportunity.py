@@ -1,5 +1,6 @@
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
+import json
 
 from app.domain.models.opportunity import OpportunityType
 from app.schemas.company import CompanyResponse
@@ -17,6 +18,7 @@ class OpportunityCreate(BaseModel):
     description: str | None = None
     requirements: list[str] | None = None
     deadline: datetime | None = None
+    is_active: bool = True
 
 
 class OpportunityUpdate(BaseModel):
@@ -28,6 +30,7 @@ class OpportunityUpdate(BaseModel):
     description: str | None = None
     requirements: list[str] | None = None
     deadline: datetime | None = None
+    is_active: bool | None = None
 
 
 # ── Response Schemas ─────────────────────────────────────────
@@ -42,9 +45,21 @@ class OpportunityResponse(BaseModel):
     salary: str | None = None
     description: str | None = None
     requirements: list[str] | None = None
+    is_active: bool = True
     posted_at: datetime | None = None
     deadline: datetime | None = None
+    applicants_count: int = 0
     company: CompanyResponse | None = None
+
+    @field_validator("requirements", mode="before")
+    @classmethod
+    def parse_requirements(cls, v):
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except json.JSONDecodeError:
+                return []
+        return v
 
     class Config:
         from_attributes = True

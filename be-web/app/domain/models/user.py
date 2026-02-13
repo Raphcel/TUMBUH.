@@ -2,7 +2,7 @@ import enum
 from datetime import datetime
 
 from sqlalchemy import (
-    Column, Integer, String, Float, Text, Enum, DateTime, ForeignKey
+    Column, Integer, String, Float, Text, Boolean, Enum, DateTime, ForeignKey
 )
 from sqlalchemy.orm import relationship
 
@@ -26,21 +26,28 @@ class User(Base):
     last_name: str = Column(String(100), nullable=False)
     role: UserRole = Column(Enum(UserRole), nullable=False, default=UserRole.STUDENT)
     avatar: str = Column(String(500), nullable=True)
+    phone: str = Column(String(20), nullable=True)
+    bio: str = Column(Text, nullable=True)
 
     # Student-specific fields
+    nim: str = Column(String(20), nullable=True, index=True)  # Student ID number
     major: str = Column(String(200), nullable=True)
     university: str = Column(String(200), nullable=True, default="IPB University")
     gpa: float = Column(Float, nullable=True)
+    cv_url: str = Column(String(500), nullable=True)
 
     # HR-specific fields
     company_id: int = Column(Integer, ForeignKey("companies.id"), nullable=True)
 
+    is_active: bool = Column(Boolean, default=True, nullable=False)
     created_at: datetime = Column(DateTime, default=datetime.utcnow)
     updated_at: datetime = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
     company = relationship("Company", back_populates="staff")
-    applications = relationship("Application", back_populates="student")
+    applications = relationship("Application", back_populates="student", cascade="all, delete-orphan")
+    bookmarks = relationship("Bookmark", back_populates="user", cascade="all, delete-orphan")
+    externships = relationship("Externship", back_populates="student", cascade="all, delete-orphan")
 
     @property
     def full_name(self) -> str:

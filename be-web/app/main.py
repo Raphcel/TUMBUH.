@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config.settings import get_settings
 from app.config.database import Base, engine
 from app.api.router import api_router
+# Import all models so they are registered with Base.metadata
+import app.domain.models  # noqa: F401
 
 settings = get_settings()
 
@@ -27,8 +29,9 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # ── Create tables ────────────────────────────────────────
-    Base.metadata.create_all(bind=engine)
+    # ── Tables are managed by Alembic migrations ─────────────
+    # Run:  alembic upgrade head
+    # To auto-generate: alembic revision --autogenerate -m "description"
 
     # ── Register routes ──────────────────────────────────────
     app.include_router(api_router)

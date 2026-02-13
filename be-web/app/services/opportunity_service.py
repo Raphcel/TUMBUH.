@@ -4,6 +4,7 @@ from fastapi import HTTPException, status
 
 from app.domain.models.opportunity import OpportunityType
 from app.repositories.opportunity_repository import OpportunityRepository
+from app.repositories.application_repository import ApplicationRepository
 from app.schemas.opportunity import (
     OpportunityCreate, OpportunityUpdate, OpportunityResponse, OpportunityListResponse,
 )
@@ -12,8 +13,13 @@ from app.schemas.opportunity import (
 class OpportunityService:
     """Service handling opportunity business logic."""
 
-    def __init__(self, opportunity_repo: OpportunityRepository):
+    def __init__(
+        self,
+        opportunity_repo: OpportunityRepository,
+        application_repo: ApplicationRepository | None = None,
+    ):
         self._opportunity_repo = opportunity_repo
+        self._application_repo = application_repo
 
     def get_opportunity(self, opportunity_id: int) -> OpportunityResponse:
         """Get a single opportunity by ID (with company)."""
@@ -80,11 +86,9 @@ class OpportunityService:
 
     @staticmethod
     def _to_response(opp) -> OpportunityResponse:
-        """Convert ORM model to response, deserializing requirements JSON."""
+        """Convert ORM model to response schema."""
         data = OpportunityResponse.model_validate(opp)
-        if isinstance(opp.requirements, str):
-            try:
-                data.requirements = json.loads(opp.requirements)
-            except json.JSONDecodeError:
-                data.requirements = []
+        # Compute applicants_count from loaded relationship
+        if hasattr(opp, "applications") and opp.applications is not None:
+            data.applicants_count = len(opp.applications)
         return data

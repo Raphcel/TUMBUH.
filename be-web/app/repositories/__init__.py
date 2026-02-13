@@ -3,6 +3,8 @@ from app.repositories.user_repository import UserRepository
 from app.repositories.company_repository import CompanyRepository
 from app.repositories.opportunity_repository import OpportunityRepository
 from app.repositories.application_repository import ApplicationRepository
+from app.repositories.bookmark_repository import BookmarkRepository
+from app.repositories.externship_repository import ExternshipRepository
 
 __all__ = [
     "BaseRepository",
@@ -10,4 +12,6 @@ __all__ = [
     "CompanyRepository",
     "OpportunityRepository",
     "ApplicationRepository",
+    "BookmarkRepository",
+    "ExternshipRepository",
 ]

@@ -2,7 +2,7 @@ import enum
 from datetime import datetime
 
 from sqlalchemy import (
-    Column, Integer, String, Text, Enum, DateTime, ForeignKey
+    Column, Integer, String, Text, Boolean, Enum, DateTime, ForeignKey
 )
 from sqlalchemy.orm import relationship
 
@@ -28,6 +28,7 @@ class Opportunity(Base):
     salary: str = Column(String(100), nullable=True)
     description: str = Column(Text, nullable=True)
     requirements: str = Column(Text, nullable=True)  # Stored as JSON string
+    is_active: bool = Column(Boolean, default=True, nullable=False, index=True)
     posted_at: datetime = Column(DateTime, default=datetime.utcnow)
     deadline: datetime = Column(DateTime, nullable=True)
 
@@ -36,7 +37,8 @@ class Opportunity(Base):
 
     # Relationships
     company = relationship("Company", back_populates="opportunities")
-    applications = relationship("Application", back_populates="opportunity")
+    applications = relationship("Application", back_populates="opportunity", cascade="all, delete-orphan")
+    bookmarks = relationship("Bookmark", back_populates="opportunity", cascade="all, delete-orphan")
 
     def __repr__(self) -> str:
         return f"<Opportunity(id={self.id}, title='{self.title}', type='{self.type}')>"

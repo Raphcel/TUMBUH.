@@ -10,10 +10,18 @@ from app.schemas.opportunity import (
 from app.schemas.application import (
     ApplicationCreate, ApplicationStatusUpdate, ApplicationResponse, ApplicationListResponse,
 )
+from app.schemas.bookmark import (
+    BookmarkCreate, BookmarkResponse, BookmarkListResponse,
+)
+from app.schemas.externship import (
+    ExternshipCreate, ExternshipUpdate, ExternshipResponse, ExternshipListResponse,
+)
 
 __all__ = [
     "UserCreate", "UserUpdate", "UserLogin", "UserResponse", "TokenResponse",
     "CompanyCreate", "CompanyUpdate", "CompanyResponse", "CompanyListResponse",
     "OpportunityCreate", "OpportunityUpdate", "OpportunityResponse", "OpportunityListResponse",
     "ApplicationCreate", "ApplicationStatusUpdate", "ApplicationResponse", "ApplicationListResponse",
+    "BookmarkCreate", "BookmarkResponse", "BookmarkListResponse",
+    "ExternshipCreate", "ExternshipUpdate", "ExternshipResponse", "ExternshipListResponse",
 ]

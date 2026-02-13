@@ -20,12 +20,19 @@ class Company(Base):
     website: str = Column(String(500), nullable=True)
     rating: float = Column(Float, nullable=True, default=0.0)
 
+    # Extended fields
+    employee_count: int = Column(Integer, nullable=True)
+    founded_year: int = Column(Integer, nullable=True)
+    linkedin_url: str = Column(String(500), nullable=True)
+    instagram_url: str = Column(String(500), nullable=True)
+    tagline: str = Column(String(300), nullable=True)
+
     created_at: datetime = Column(DateTime, default=datetime.utcnow)
     updated_at: datetime = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
     staff = relationship("User", back_populates="company")
-    opportunities = relationship("Opportunity", back_populates="company")
+    opportunities = relationship("Opportunity", back_populates="company", cascade="all, delete-orphan")
 
     def __repr__(self) -> str:
         return f"<Company(id={self.id}, name='{self.name}')>"

@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends
 
+from app.domain.models.user import User
 from app.services.auth_service import AuthService
-from app.schemas.user import UserCreate, UserLogin, TokenResponse
-from app.api.dependencies import get_auth_service
+from app.schemas.user import UserCreate, UserLogin, TokenResponse, UserResponse
+from app.api.dependencies import get_auth_service, get_current_user
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -23,3 +24,9 @@ def login(
 ):
     """Authenticate and receive an access token."""
     return auth_service.login(data.email, data.password)
+
+
+@router.get("/me", response_model=UserResponse)
+def me(current_user: User = Depends(get_current_user)):
+    """Get the currently authenticated user's profile."""
+    return current_user

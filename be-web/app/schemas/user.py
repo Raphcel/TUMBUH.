@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 
 from app.domain.models.user import UserRole
 
@@ -15,6 +15,7 @@ class UserCreate(BaseModel):
     role: UserRole = UserRole.STUDENT
 
     # Student-specific (optional)
+    nim: str | None = None
     major: str | None = None
     university: str | None = "IPB University"
     gpa: float | None = None
@@ -27,9 +28,13 @@ class UserUpdate(BaseModel):
     """Schema for updating user profile."""
     first_name: str | None = None
     last_name: str | None = None
+    phone: str | None = None
+    bio: str | None = None
+    nim: str | None = None
     major: str | None = None
     gpa: float | None = None
     avatar: str | None = None
+    cv_url: str | None = None
 
 
 class UserLogin(BaseModel):
@@ -48,10 +53,15 @@ class UserResponse(BaseModel):
     last_name: str
     role: UserRole
     avatar: str | None = None
+    phone: str | None = None
+    bio: str | None = None
+    nim: str | None = None
     major: str | None = None
     university: str | None = None
     gpa: float | None = None
+    cv_url: str | None = None
     company_id: int | None = None
+    is_active: bool = True
     created_at: datetime
 
     class Config:

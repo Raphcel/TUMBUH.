@@ -12,9 +12,12 @@ class ApplicationRepository(BaseRepository[Application]):
 
     def get_by_student(self, student_id: int, skip: int = 0, limit: int = 100) -> list[Application]:
         """Retrieve all applications submitted by a student."""
+        from app.domain.models.opportunity import Opportunity
         return (
             self._db.query(Application)
-            .options(joinedload(Application.opportunity))
+            .options(
+                joinedload(Application.opportunity).joinedload(Opportunity.company)
+            )
             .filter(Application.student_id == student_id)
             .order_by(Application.applied_at.desc())
             .offset(skip)
@@ -24,9 +27,13 @@ class ApplicationRepository(BaseRepository[Application]):
 
     def get_by_opportunity(self, opportunity_id: int, skip: int = 0, limit: int = 100) -> list[Application]:
         """Retrieve all applications for a given opportunity."""
+        from app.domain.models.opportunity import Opportunity
         return (
             self._db.query(Application)
-            .options(joinedload(Application.student))
+            .options(
+                joinedload(Application.student),
+                joinedload(Application.opportunity).joinedload(Opportunity.company),
+            )
             .filter(Application.opportunity_id == opportunity_id)
             .order_by(Application.applied_at.desc())
             .offset(skip)
