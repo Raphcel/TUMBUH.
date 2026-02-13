@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Card, CardBody } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
-import { OPPORTUNITIES, COMPANIES } from '../data/mockData';
+import { opportunitiesApi } from '../api/opportunities';
+import { applicationsApi } from '../api/applications';
+import { useAuth } from '../context/AuthContext';
 import {
   ArrowLeft,
   MapPin,
@@ -13,12 +15,51 @@ import {
   Briefcase,
   Lock,
   X,
+  CheckCircle,
 } from 'lucide-react';
 
 export function DetailLowongan() {
   const { id } = useParams();
+  const { user } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const job = OPPORTUNITIES.find((o) => o.id === parseInt(id));
+  const [job, setJob] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [applying, setApplying] = useState(false);
+  const [applied, setApplied] = useState(false);
+  const [applyError, setApplyError] = useState('');
+
+  useEffect(() => {
+    opportunitiesApi
+      .get(id)
+      .then((data) => setJob(data))
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  const handleApply = async () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+    setApplying(true);
+    setApplyError('');
+    try {
+      await applicationsApi.apply(job.id);
+      setApplied(true);
+    } catch (err) {
+      setApplyError(err.message || 'Failed to apply');
+    } finally {
+      setApplying(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-20">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0f2854]" />
+      </div>
+    );
+  }
 
   if (!job) {
     return (
@@ -28,7 +69,15 @@ export function DetailLowongan() {
     );
   }
 
-  const company = COMPANIES.find((c) => c.id === job.companyId);
+  const company = job.company || {};
+  const requirements = Array.isArray(job.requirements) ? job.requirements : [];
+  const deadlineStr = job.deadline
+    ? new Date(job.deadline).toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    : '-';
 
   return (
     <div className="bg-white min-h-screen pb-20 relative">
@@ -81,11 +130,17 @@ export function DetailLowongan() {
           </Link>
           <div className="flex flex-col md:flex-row gap-6 items-start">
             <div className="w-20 h-20 rounded-xl bg-white p-2 flex items-center justify-center shadow-lg">
-              <img
-                src={company.logo}
-                alt={company.name}
-                className="w-full h-full object-contain"
-              />
+              {company.logo ? (
+                <img
+                  src={company.logo}
+                  alt={company.name}
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <span className="text-2xl font-bold text-gray-400">
+                  {company.name?.[0]}
+                </span>
+              )}
             </div>
             <div className="flex-1">
               <h1 className="text-3xl font-bold text-white mb-2">
@@ -99,13 +154,23 @@ export function DetailLowongan() {
                 </span>
               </div>
             </div>
-            <Button
-              onClick={() => setShowAuthModal(true)}
-              className="bg-accent hover:bg-accent/90 text-primary font-semibold w-full md:w-auto shadow-lg shadow-accent/20 border-none"
-            >
-              Apply Now
-            </Button>
+            {applied ? (
+              <div className="flex items-center gap-2 text-white bg-green-500/80 px-4 py-2 rounded-lg font-semibold">
+                <CheckCircle size={18} /> Applied
+              </div>
+            ) : (
+              <Button
+                onClick={handleApply}
+                disabled={applying}
+                className="bg-accent hover:bg-accent/90 text-primary font-semibold w-full md:w-auto shadow-lg shadow-accent/20 border-none"
+              >
+                {applying ? 'Applying...' : 'Apply Now'}
+              </Button>
+            )}
           </div>
+          {applyError && (
+            <p className="mt-2 text-red-300 text-sm">{applyError}</p>
+          )}
         </div>
       </div>
 
@@ -122,20 +187,24 @@ export function DetailLowongan() {
                   {job.description}
                 </p>
 
-                <h3 className="text-lg font-bold text-primary mt-8 mb-4">
-                  Requirements
-                </h3>
-                <ul className="space-y-3">
-                  {job.requirements.map((req, idx) => (
-                    <li
-                      key={idx}
-                      className="flex items-start gap-3 text-secondary"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" />
-                      <span className="leading-relaxed">{req}</span>
-                    </li>
-                  ))}
-                </ul>
+                {requirements.length > 0 && (
+                  <>
+                    <h3 className="text-lg font-bold text-primary mt-8 mb-4">
+                      Requirements
+                    </h3>
+                    <ul className="space-y-3">
+                      {requirements.map((req, idx) => (
+                        <li
+                          key={idx}
+                          className="flex items-start gap-3 text-secondary"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" />
+                          <span className="leading-relaxed">{req}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
               </CardBody>
             </Card>
           </div>
@@ -157,13 +226,15 @@ export function DetailLowongan() {
                     <p className="text-xs font-medium text-secondary uppercase tracking-wider mb-1 flex items-center gap-1">
                       <DollarSign size={12} /> Salary
                     </p>
-                    <p className="font-medium text-gray-900">{job.salary}</p>
+                    <p className="font-medium text-gray-900">
+                      {job.salary || '-'}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs font-medium text-secondary uppercase tracking-wider mb-1 flex items-center gap-1">
                       <Calendar size={12} /> Deadline
                     </p>
-                    <p className="font-medium text-gray-900">{job.deadline}</p>
+                    <p className="font-medium text-gray-900">{deadlineStr}</p>
                   </div>
                 </div>
               </CardBody>

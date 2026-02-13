@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { COMPANIES } from '../data/mockData';
+import { companiesApi } from '../api/companies';
 import { Card, CardBody } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Input } from '../components/ui/Input';
@@ -8,8 +8,20 @@ import { Search, Star, Award, MapPin } from 'lucide-react';
 
 export function Perusahaan() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [companies, setCompanies] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredCompanies = COMPANIES.filter(
+  useEffect(() => {
+    companiesApi
+      .list(0, 200)
+      .then((data) =>
+        setCompanies(Array.isArray(data) ? data : data.items || [])
+      )
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filteredCompanies = companies.filter(
     (company) =>
       company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       company.industry.toLowerCase().includes(searchTerm.toLowerCase())
@@ -42,7 +54,11 @@ export function Perusahaan() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredCompanies.length > 0 ? (
+          {loading ? (
+            <div className="col-span-full flex justify-center py-20">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0f2854]" />
+            </div>
+          ) : filteredCompanies.length > 0 ? (
             filteredCompanies.map((company, index) => (
               <Link
                 key={company.id}

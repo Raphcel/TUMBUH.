@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Home,
   FileText,
@@ -9,9 +9,12 @@ import {
   Building,
   LogOut,
 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 export function Sidebar({ role = 'student' }) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const studentLinks = [
     { name: 'Dashboard', path: '/student/dashboard', icon: Home },
@@ -33,6 +36,21 @@ export function Sidebar({ role = 'student' }) {
       ? 'bg-white/15 text-white font-semibold'
       : 'text-white/70 hover:text-white hover:bg-white/10';
   };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  const displayName = user
+    ? `${user.first_name} ${user.last_name}`
+    : role === 'hr'
+      ? 'HR Staff'
+      : 'Student';
+
+  const avatarUrl =
+    user?.avatar ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=0f2854&color=fff`;
 
   return (
     <div className="flex h-screen flex-col justify-between border-e border-gray-900/10 bg-gradient-to-b from-[#0f2854] to-[#727272] w-64 fixed left-0 top-0 bottom-0 z-40">
@@ -71,16 +89,19 @@ export function Sidebar({ role = 'student' }) {
         <div className="flex items-center gap-2 bg-white/5 p-4 hover:bg-white/10">
           <img
             alt="Profile"
-            src={`https://ui-avatars.com/api/?name=${role === 'hr' ? 'HR Staff' : 'Student'}&background=random`}
+            src={avatarUrl}
             className="h-9 w-9 rounded-full object-cover"
           />
 
           <div className="flex-1">
-            <p className="text-xs font-medium text-white/60">View Profile</p>
-            <div className="flex items-center gap-1 text-xs text-white/70 pt-1 hover:text-red-400 cursor-pointer">
+            <p className="text-xs font-medium text-white">{displayName}</p>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1 text-xs text-white/70 pt-1 hover:text-red-400 cursor-pointer"
+            >
               <LogOut size={12} />
               <span>Logout</span>
-            </div>
+            </button>
           </div>
         </div>
       </div>

@@ -1,15 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Card, CardBody } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
-import { OPPORTUNITIES, COMPANIES } from '../data/mockData';
+import { opportunitiesApi } from '../api/opportunities';
+import { companiesApi } from '../api/companies';
 import { MapPin, DollarSign, ArrowRight } from 'lucide-react';
 
 export function Beranda() {
-  const recentJobs = OPPORTUNITIES.slice(0, 3);
-  // Repeat companies to simulate scrolling effect if needed, but for now just use all
-  const allCompanies = [...COMPANIES, ...COMPANIES];
+  const [jobs, setJobs] = useState([]);
+  const [companies, setCompanies] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([opportunitiesApi.list(0, 3), companiesApi.list(0, 100)])
+      .then(([oppData, compData]) => {
+        setJobs(Array.isArray(oppData) ? oppData : oppData.items || []);
+        setCompanies(Array.isArray(compData) ? compData : compData.items || []);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const allCompanies = [...companies, ...companies]; // duplicate for scroll effect
 
   return (
     <>
@@ -65,52 +78,58 @@ export function Beranda() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {recentJobs.map((job) => (
-              <Card
-                key={job.id}
-                className="hover:border-primary/30 transition-colors group"
-              >
-                <CardBody className="p-5">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="font-medium text-lg text-primary line-clamp-1 group-hover:text-primary/80 transition-colors">
-                        {job.title}
-                      </h3>
-                      <p className="text-secondary text-sm">
-                        {COMPANIES.find((c) => c.id === job.companyId)?.name}
-                      </p>
+            {loading ? (
+              <div className="col-span-full text-center py-12 text-secondary">
+                Loading...
+              </div>
+            ) : (
+              jobs.map((job) => (
+                <Card
+                  key={job.id}
+                  className="hover:border-primary/30 transition-colors group"
+                >
+                  <CardBody className="p-5">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h3 className="font-medium text-lg text-primary line-clamp-1 group-hover:text-primary/80 transition-colors">
+                          {job.title}
+                        </h3>
+                        <p className="text-secondary text-sm">
+                          {job.company?.name}
+                        </p>
+                      </div>
+                      <Badge
+                        variant={
+                          job.type === 'Internship'
+                            ? 'info'
+                            : job.type === 'Scholarship'
+                              ? 'success'
+                              : 'neutral'
+                        }
+                      >
+                        {job.type}
+                      </Badge>
                     </div>
-                    <Badge
-                      variant={
-                        job.type === 'Internship'
-                          ? 'info'
-                          : job.type === 'Scholarship'
-                            ? 'success'
-                            : 'neutral'
-                      }
+                    <div className="space-y-3 mb-6">
+                      <div className="flex items-center text-sm text-secondary gap-2">
+                        <MapPin size={16} className="text-accent" />
+                        {job.location}
+                      </div>
+                      <div className="flex items-center text-sm text-secondary gap-2">
+                        <DollarSign size={16} className="text-accent" />
+                        {job.salary}
+                      </div>
+                    </div>
+                    <Button
+                      to={`/lowongan/${job.id}`}
+                      className="w-full text-xs py-2 bg-[#0f2854] hover:bg-[#183a6d] text-white font-semibold rounded border-none shadow-sm transition-colors focus:ring-2 focus:ring-accent/30"
                     >
-                      {job.type}
-                    </Badge>
-                  </div>
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-center text-sm text-secondary gap-2">
-                      <MapPin size={16} className="text-accent" />
-                      {job.location}
-                    </div>
-                    <div className="flex items-center text-sm text-secondary gap-2">
-                      <DollarSign size={16} className="text-accent" />
-                      {job.salary}
-                    </div>
-                  </div>
-                  <Button
-                    to={`/lowongan/${job.id}`}
-                    className="w-full text-xs py-2 bg-[#0f2854] hover:bg-[#183a6d] text-white font-semibold rounded border-none shadow-sm transition-colors focus:ring-2 focus:ring-accent/30"
-                  >
-                    Details
-                  </Button>
-                </CardBody>
-              </Card>
-            ))}
+                      Details
+                    </Button>
+                  </CardBody>
+                </Card>
+              ))
+            )}
           </div>
         </div>
       </section>

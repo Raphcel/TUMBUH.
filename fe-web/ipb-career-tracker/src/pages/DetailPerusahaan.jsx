@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { COMPANIES, OPPORTUNITIES } from '../data/mockData';
+import { companiesApi } from '../api/companies';
+import { opportunitiesApi } from '../api/opportunities';
 import { Card, CardBody } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import {
@@ -18,16 +19,32 @@ import {
 
 export function DetailPerusahaan() {
   const { id } = useParams();
-  const company = COMPANIES.find((c) => c.id === parseInt(id));
+  const [company, setCompany] = useState(null);
+  const [companyJobs, setCompanyJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([companiesApi.get(id), opportunitiesApi.listByCompany(id)])
+      .then(([compData, oppData]) => {
+        setCompany(compData);
+        setCompanyJobs(Array.isArray(oppData) ? oppData : oppData.items || []);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-20">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0f2854]" />
+      </div>
+    );
+  }
 
   if (!company)
     return (
       <div className="py-20 text-center text-secondary">Company not found</div>
     );
-
-  const companyJobs = OPPORTUNITIES.filter(
-    (job) => job.companyId === company.id
-  );
 
   // Mock Awards & Trust Signals
   const awards = [
@@ -52,11 +69,17 @@ export function DetailPerusahaan() {
 
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 flex flex-col md:flex-row gap-8 items-start">
           <div className="w-32 h-32 rounded-xl bg-white shadow-md border border-gray-100 flex items-center justify-center p-4 shrink-0 -mt-16 md:mt-0">
-            <img
-              src={company.logo}
-              alt={company.name}
-              className="w-full h-full object-contain"
-            />
+            {company.logo ? (
+              <img
+                src={company.logo}
+                alt={company.name}
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <span className="text-3xl font-bold text-gray-400">
+                {company.name?.[0]}
+              </span>
+            )}
           </div>
           <div className="flex-1 pt-2 md:pt-0">
             <div className="flex justify-between items-start">
@@ -65,22 +88,30 @@ export function DetailPerusahaan() {
                   {company.name}
                 </h1>
                 <p className="text-secondary text-lg mb-4">
-                  Innovating for a better future.
+                  {company.tagline || 'Innovating for a better future.'}
                 </p>
               </div>
               <div className="flex gap-2">
-                <a
-                  href="#"
-                  className="p-2 text-gray-400 hover:text-[#0077b5] bg-gray-50 rounded-full transition-colors"
-                >
-                  <Linkedin size={20} />
-                </a>
-                <a
-                  href="#"
-                  className="p-2 text-gray-400 hover:text-[#E1306C] bg-gray-50 rounded-full transition-colors"
-                >
-                  <Instagram size={20} />
-                </a>
+                {company.linkedin_url && (
+                  <a
+                    href={company.linkedin_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="p-2 text-gray-400 hover:text-[#0077b5] bg-gray-50 rounded-full transition-colors"
+                  >
+                    <Linkedin size={20} />
+                  </a>
+                )}
+                {company.instagram_url && (
+                  <a
+                    href={company.instagram_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="p-2 text-gray-400 hover:text-[#E1306C] bg-gray-50 rounded-full transition-colors"
+                  >
+                    <Instagram size={20} />
+                  </a>
+                )}
                 <a
                   href={company.website}
                   target="_blank"

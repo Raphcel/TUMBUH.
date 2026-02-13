@@ -1,11 +1,14 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '../ui/Button';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 export function Navbar() {
   const [openNav, setOpenNav] = React.useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const navLinks = [
     { name: 'Beranda', path: '/' },
@@ -19,6 +22,15 @@ export function Navbar() {
       ? 'text-[#0f2854] font-semibold underline underline-offset-8 decoration-2'
       : 'text-gray-700 hover:text-[#0f2854]';
   };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setOpenNav(false);
+  };
+
+  const dashboardPath =
+    user?.role === 'hr' ? '/hr/dashboard' : '/student/dashboard';
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
@@ -61,34 +73,46 @@ export function Navbar() {
         </div>
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-4 items-center">
-          <Link
-            to="/login"
-            className="text-sm font-semibold leading-6 text-[#0f2854]/80 hover:text-[#0f2854] py-2"
-          >
-            Masuk
-          </Link>
-          <Button
-            to="/register"
-            className="bg-[#0f2854] hover:bg-[#2e4f7f] text-white font-semibold px-5 py-2 rounded shadow-sm transition-colors border-none focus:ring-2 focus:ring-[#0f2854]/40"
-            size="sm"
-          >
-            Daftar Sekarang
-          </Button>
-          {/* Mock Dashboard Link for easier access */}
-          <div className="flex flex-col text-[10px] ml-4 text-right">
-            <Link
-              to="/student/dashboard"
-              className="text-gray-400 hover:text-[#0f2854]"
-            >
-              Student DB
-            </Link>
-            <Link
-              to="/hr/dashboard"
-              className="text-gray-400 hover:text-[#0f2854]"
-            >
-              HR DB
-            </Link>
-          </div>
+          {user ? (
+            <>
+              <Link
+                to={dashboardPath}
+                className="flex items-center gap-2 text-sm font-medium text-[#0f2854]"
+              >
+                <img
+                  src={
+                    user.avatar ||
+                    `https://ui-avatars.com/api/?name=${user.first_name}+${user.last_name}&background=0f2854&color=fff`
+                  }
+                  alt="Avatar"
+                  className="h-8 w-8 rounded-full object-cover"
+                />
+                <span>{user.first_name}</span>
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-1 text-sm text-gray-500 hover:text-red-500 transition-colors"
+              >
+                <LogOut size={16} /> Keluar
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="text-sm font-semibold leading-6 text-[#0f2854]/80 hover:text-[#0f2854] py-2"
+              >
+                Masuk
+              </Link>
+              <Button
+                to="/register"
+                className="bg-[#0f2854] hover:bg-[#2e4f7f] text-white font-semibold px-5 py-2 rounded shadow-sm transition-colors border-none focus:ring-2 focus:ring-[#0f2854]/40"
+                size="sm"
+              >
+                Daftar Sekarang
+              </Button>
+            </>
+          )}
         </div>
       </nav>
 
@@ -111,20 +135,40 @@ export function Navbar() {
               </Link>
             ))}
             <div className="mt-4 pt-4 border-t border-gray-200 flex flex-col gap-3">
-              <Link
-                to="/login"
-                className="text-center font-medium text-[#0f2854] hover:text-[#2e4f7f]"
-                onClick={() => setOpenNav(false)}
-              >
-                Masuk
-              </Link>
-              <Button
-                to="/register"
-                className="w-full justify-center bg-[#0f2854] hover:bg-[#2e4f7f] text-white"
-                onClick={() => setOpenNav(false)}
-              >
-                Daftar Sekarang
-              </Button>
+              {user ? (
+                <>
+                  <Link
+                    to={dashboardPath}
+                    className="text-center font-medium text-[#0f2854]"
+                    onClick={() => setOpenNav(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <Button
+                    onClick={handleLogout}
+                    className="w-full justify-center bg-red-50 text-red-600 hover:bg-red-100 border-none"
+                  >
+                    <LogOut size={16} className="mr-1" /> Keluar
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="text-center font-medium text-[#0f2854] hover:text-[#2e4f7f]"
+                    onClick={() => setOpenNav(false)}
+                  >
+                    Masuk
+                  </Link>
+                  <Button
+                    to="/register"
+                    className="w-full justify-center bg-[#0f2854] hover:bg-[#2e4f7f] text-white"
+                    onClick={() => setOpenNav(false)}
+                  >
+                    Daftar Sekarang
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
