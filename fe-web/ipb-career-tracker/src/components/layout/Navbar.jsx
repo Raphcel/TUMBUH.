@@ -222,7 +222,7 @@ export function Navbar() {
               <Button
                 to="/register"
                 className={`font-semibold px-5 py-2 rounded shadow-sm transition-all border-none focus:ring-2 ${isTransparent
-                  ? 'bg-white text-[#0f2854] hover:bg-white/90 focus:ring-white/40'
+                  ? 'bg-white !text-[#0f2854] hover:bg-white/90 focus:ring-white/40'
                   : 'bg-[#0f2854] hover:bg-[#1a3a70] text-white focus:ring-[#0f2854]/40'
                   }`}
                 size="sm"

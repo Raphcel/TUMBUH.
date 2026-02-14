@@ -1,5 +1,6 @@
+import json
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from app.domain.models.application import ApplicationStatus
 from app.schemas.opportunity import OpportunityResponse
@@ -38,6 +39,18 @@ class ApplicationResponse(BaseModel):
     history: list[StatusHistoryItem] | None = None
     opportunity: OpportunityResponse | None = None
     student: UserResponse | None = None
+
+    @field_validator("history", mode="before")
+    @classmethod
+    def parse_history_json(cls, v):
+        """Deserialize the JSON string stored in the DB into a list."""
+        if isinstance(v, str):
+            try:
+                raw = json.loads(v)
+                return [StatusHistoryItem(**h) for h in raw]
+            except (json.JSONDecodeError, TypeError):
+                return []
+        return v
 
     class Config:
         from_attributes = True

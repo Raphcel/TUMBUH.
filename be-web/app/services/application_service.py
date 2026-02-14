@@ -7,7 +7,7 @@ from app.domain.models.application import ApplicationStatus
 from app.repositories.application_repository import ApplicationRepository
 from app.schemas.application import (
     ApplicationCreate, ApplicationStatusUpdate,
-    ApplicationResponse, ApplicationListResponse, StatusHistoryItem,
+    ApplicationResponse, ApplicationListResponse,
 )
 
 
@@ -92,12 +92,5 @@ class ApplicationService:
 
     @staticmethod
     def _to_response(app) -> ApplicationResponse:
-        """Convert ORM model to response, deserializing history JSON."""
-        response = ApplicationResponse.model_validate(app)
-        if isinstance(app.history, str):
-            try:
-                raw = json.loads(app.history)
-                response.history = [StatusHistoryItem(**h) for h in raw]
-            except json.JSONDecodeError:
-                response.history = []
-        return response
+        """Convert ORM model to response — history JSON is parsed by the schema validator."""
+        return ApplicationResponse.model_validate(app)

@@ -12,7 +12,7 @@ export const authApi = {
    */
   async login(email, password) {
     const res = await fetch(
-      `${import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'}/auth/login`,
+      `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/v1'}/auth/login`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
