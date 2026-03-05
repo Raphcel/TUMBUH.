@@ -10,6 +10,7 @@ import {
   Clock,
   Plus,
   X,
+  AlertTriangle,
   Building,
   Calendar,
 } from 'lucide-react';
@@ -117,140 +118,188 @@ export function StudentDashboard() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="max-w-7xl mx-auto space-y-8 bg-gray-50/30 min-h-screen pb-20"
+      className="max-w-[1600px] mx-auto space-y-8 bg-surface-muted min-h-screen pb-20"
     >
-      <motion.div variants={itemVariants} className=" pb-0 p-8 -mx-8 -mt-8 mb-8 ">
-        <h1 className="text-3xl font-semibold text-primary tracking-tight">
+      <motion.div variants={itemVariants} className="pb-0 mb-8 border-b border-surface-border pb-6">
+        <h1 className="text-3xl font-bold text-text tracking-tight">
           Hello, {user?.first_name || 'Student'}.
         </h1>
-        <p className="text-secondary mt-2 text-lg">
+        <p className="text-text-muted mt-2 text-base">
           Here is your career overview for today.
         </p>
       </motion.div>
 
-      {/* Stats Block */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <motion.div
-          variants={itemVariants}
-          whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)" }}
-          className="p-5 rounded-lg bg-white border border-highlight/50 shadow-sm relative overflow-hidden group transition-all"
-        >
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-            <Briefcase size={64} className="text-primary" />
-          </div>
-          <p className="text-xs font-semibold text-secondary uppercase tracking-widest">
-            Active Applications
-          </p>
-          <p className="text-4xl font-bold text-primary mt-3">
-            {activeApplications.length}
-          </p>
+      {/* Primary Focus Area - Active Applications & Quick Stats */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+        {/* Main Stats Block - Restructured for priority */}
+        <motion.div variants={itemVariants} className="xl:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <motion.div
+            whileHover={{ y: -4, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)" }}
+            className="p-5 rounded-xl bg-surface border border-brand-muted shadow-sm relative overflow-hidden group transition-all"
+          >
+            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+              <Briefcase size={80} className="text-brand -mt-4 -mr-4" />
+            </div>
+            <p className="text-xs font-semibold text-text-muted uppercase tracking-widest">
+              Active Applications
+            </p>
+            <p className="text-5xl font-bold text-brand mt-4">
+              {activeApplications.length}
+            </p>
+            <p className="text-xs text-text-muted mt-2 pt-2 border-t border-surface-border">
+              Require your attention
+            </p>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ y: -4, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)" }}
+            className="p-5 rounded-xl bg-surface border border-surface-border shadow-sm relative overflow-hidden group transition-all"
+          >
+            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+              <FileText size={80} className="text-text-muted -mt-4 -mr-4" />
+            </div>
+            <p className="text-xs font-semibold text-text-muted uppercase tracking-widest">
+              Total Applications
+            </p>
+            <p className="text-4xl font-bold text-text tracking-tight mt-5">
+              {myApplications.length}
+            </p>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ y: -4, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)" }}
+            className="p-5 rounded-xl bg-surface border border-surface-border shadow-sm relative overflow-hidden group transition-all"
+          >
+            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+              <CheckCircle size={80} className="text-emerald-600 -mt-4 -mr-4" />
+            </div>
+            <p className="text-xs font-semibold text-text-muted uppercase tracking-widest">
+              Profile Status
+            </p>
+            <div className="flex items-center gap-3 mt-5">
+              <span className="text-4xl font-bold text-text tracking-tight">85%</span>
+            </div>
+            <p className="text-xs text-text-muted mt-2 pt-2 border-t border-surface-border flex items-center justify-between">
+              <span>Completion</span>
+              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 uppercase tracking-wider">
+                Good
+              </span>
+            </p>
+          </motion.div>
         </motion.div>
-        <motion.div
-          variants={itemVariants}
-          whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)" }}
-          className="p-5 rounded-lg bg-white border border-gray-100 shadow-sm relative overflow-hidden group transition-all"
-        >
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-            <FileText size={64} className="text-secondary" />
-          </div>
-          <p className="text-xs font-semibold text-secondary uppercase tracking-widest">
-            Total Applications
-          </p>
-          <p className="text-4xl font-bold text-primary mt-3">
-            {myApplications.length}
-          </p>
-        </motion.div>
-        <motion.div
-          variants={itemVariants}
-          whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)" }}
-          className="p-5 rounded-lg bg-white border border-gray-100 shadow-sm relative overflow-hidden group transition-all"
-        >
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-            <CheckCircle size={64} className="text-emerald-600" />
-          </div>
-          <p className="text-xs font-semibold text-secondary uppercase tracking-widest">
-            Profile Status
-          </p>
-          <div className="flex items-center gap-3 mt-3">
-            <span className="text-4xl font-bold text-primary">85%</span>
-            <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100">
-              Almost there
-            </span>
-          </div>
+
+        {/* Action Required / Highlights */}
+        <motion.div variants={itemVariants} className="xl:col-span-1">
+          <motion.div
+            whileHover={{ scale: 1.01 }}
+            className="bg-brand border border-brand-light p-5 rounded-xl min-h-full relative shadow-md transition-all flex flex-col justify-between overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mt-10 -mr-10 blur-2xl"></div>
+            <div>
+              <p className="text-sm text-brand-muted font-medium mb-3 flex items-center gap-2">
+                <AlertTriangle size={16} /> Action Required
+              </p>
+              <ul className="space-y-3 mt-4">
+                <li className="flex items-start gap-3 text-sm text-white bg-white/5 p-3 rounded-lg border border-white/10">
+                  <div className="w-2 h-2 rounded-full bg-red-400 mt-1.5 flex-shrink-0"></div>
+                  <span>Complete the Gojek assessment test before Thursday, 5 PM.</span>
+                </li>
+              </ul>
+            </div>
+            <Button variant="outline" className="mt-6 w-full bg-white/10 border-white/20 text-white hover:bg-white/20">
+              View Tasks
+            </Button>
+          </motion.div>
         </motion.div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column */}
+        {/* Left Column - Main Content */}
         <div className="lg:col-span-2 space-y-8">
-          {/* Recent Activity */}
+          {/* Active Applications List (Moved Up for priority) */}
           <motion.div variants={itemVariants} className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-lg font-semibold text-primary flex items-center gap-2">
-                <Clock size={18} /> Recent Activity
+            <div className="flex justify-between items-center px-1">
+              <h2 className="text-lg font-bold text-text flex items-center gap-2">
+                Active Tracker
               </h2>
               <Link
                 to="/student/applications"
-                className="text-sm text-secondary hover:text-primary underline decoration-gray-300 underline-offset-4"
+                className="text-sm font-medium text-brand hover:text-brand-light transition-colors"
               >
-                View tracker
+                View all
               </Link>
             </div>
 
-            <div className="space-y-3">
-              {myApplications.slice(0, 3).map((app, index) => {
-                const job = app.opportunity;
-                return (
-                  <motion.div
-                    key={app.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    whileHover={{ scale: 1.01 }}
-                    className="group flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg hover:border-primary/30 transition-all shadow-sm"
-                  >
-                    <div>
-                      <h3 className="font-medium text-primary">{job?.title}</h3>
-                      <p className="text-xs text-secondary mt-1 flex items-center gap-1">
-                        <Building size={12} /> {job?.company?.name}
-                        <span className="mx-1">&middot;</span>
-                        <Clock size={12} /> Applied{' '}
-                        {new Date(app.applied_at).toLocaleDateString('id-ID')}
-                      </p>
-                    </div>
-                    <Badge
-                      variant={
-                        app.status === 'Rejected'
-                          ? 'error'
-                          : app.status === 'Accepted'
-                            ? 'success'
-                            : 'info'
-                      }
+            <div className="bg-surface border border-surface-border rounded-xl shadow-sm overflow-hidden">
+              <div className="divide-y divide-surface-border">
+                {activeApplications.slice(0, 4).map((app, index) => {
+                  const job = app.opportunity;
+                  return (
+                    <motion.div
+                      key={app.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      whileHover={{ backgroundColor: "rgba(249, 250, 251, 0.5)" }}
+                      className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 transition-colors gap-4"
                     >
-                      {app.status}
-                    </Badge>
-                  </motion.div>
-                );
-              })}
-              {myApplications.length === 0 && (
-                <p className="text-secondary italic">
-                  No applications yet. Start exploring.
-                </p>
-              )}
+                      <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-lg bg-surface-muted border border-surface-border flex items-center justify-center flex-shrink-0 text-brand font-bold text-sm">
+                          {job?.company?.name?.charAt(0) || 'C'}
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-text group-hover:text-brand transition-colors text-base">{job?.title}</h3>
+                          <p className="text-sm text-text-muted mt-0.5 flex items-center gap-1.5">
+                            <span>{job?.company?.name}</span>
+                            <span className="w-1 h-1 rounded-full bg-surface-border"></span>
+                            <span className="flex items-center gap-1"><Clock size={12} /> {new Date(app.applied_at).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' })}</span>
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 sm:w-auto w-full justify-end">
+                        <Badge
+                          variant={
+                            app.status === 'Rejected'
+                              ? 'error'
+                              : app.status === 'Accepted'
+                                ? 'success'
+                                : app.status === 'Interview' ? 'warning' : 'info'
+                          }
+                        >
+                          {app.status}
+                        </Badge>
+                        <Button size="sm" variant="ghost" className="opacity-0 group-hover:opacity-100 transition-opacity">
+                          Details
+                        </Button>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+                {activeApplications.length === 0 && (
+                  <div className="p-8 text-center bg-surface-muted/30">
+                    <p className="text-text-muted font-medium">No active applications.</p>
+                    <p className="text-sm text-text-light mt-1 mb-4">Time to find your next opportunity!</p>
+                    <Link to="/lowongan">
+                      <Button size="sm" variant="primary">Explore Jobs</Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
           </motion.div>
 
-          {/* My Externships Section */}
+          {/* Externships / Projects */}
           <motion.div variants={itemVariants} className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-lg font-semibold text-primary flex items-center gap-2">
-                <Briefcase size={18} /> My Externships / Projects
+            <div className="flex justify-between items-center px-1">
+              <h2 className="text-lg font-bold text-text">
+                Projects & Externships
               </h2>
               <button
                 onClick={() => setShowExternshipModal(true)}
-                className="text-sm flex items-center gap-1 text-primary hover:text-accent font-medium px-3 py-1.5 rounded-md hover:bg-gray-50 transition-colors"
+                className="text-sm flex items-center gap-1.5 text-brand bg-brand-muted/50 hover:bg-brand-muted px-3 py-1.5 rounded-lg font-medium transition-colors border border-brand/5"
               >
-                <Plus size={16} /> Add Manual Entry
+                <Plus size={16} /> Add Entry
               </button>
             </div>
 
@@ -258,49 +307,60 @@ export function StudentDashboard() {
               {externships.map((ext, index) => (
                 <motion.div
                   key={ext.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ scale: 1.03 }}
-                  className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm transition-all"
+                  transition={{ delay: index * 0.1, type: "spring", stiffness: 300, damping: 30 }}
+                  whileHover={{ y: -2, boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)" }}
+                  className="p-5 bg-surface border border-surface-border rounded-xl shadow-sm transition-all"
                 >
-                  <h3 className="font-semibold text-primary">{ext.title}</h3>
-                  <p className="text-sm text-secondary flex items-center gap-1 mt-1">
-                    <Building size={14} /> {ext.company}
-                  </p>
-                  <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-50">
-                    <span className="text-xs text-gray-400 flex items-center gap-1">
-                      <Calendar size={12} /> {ext.duration}
-                    </span>
-                    <span className="text-xs font-medium px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-semibold text-text">{ext.title}</h3>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${ext.status === 'Ongoing' ? 'bg-blue-50 text-blue-700 border border-blue-100' : 'bg-gray-100 text-gray-600 border border-gray-200'}`}>
                       {ext.status}
+                    </span>
+                  </div>
+
+                  <p className="text-sm text-text-muted flex items-center gap-1.5">
+                    <Building size={14} className="text-text-light" /> {ext.company}
+                  </p>
+
+                  <div className="mt-4 pt-3 border-t border-surface-border">
+                    <span className="text-xs text-text-muted font-medium flex items-center gap-1.5 bg-surface-muted inline-flex px-2 py-1 rounded-md">
+                      <Calendar size={12} /> Duration: {ext.duration}
                     </span>
                   </div>
                 </motion.div>
               ))}
+              {externships.length === 0 && (
+                <div className="col-span-1 md:col-span-2 p-8 text-center bg-surface border border-surface-border border-dashed rounded-xl">
+                  <Briefcase size={32} className="mx-auto text-surface-border mb-3" />
+                  <p className="text-sm font-medium text-text-muted">No custom experiences added.</p>
+                  <p className="text-xs text-text-light mt-1">Track freelance work, research, or side projects here.</p>
+                </div>
+              )}
             </div>
           </motion.div>
         </div>
 
-        {/* Right Column */}
-        <motion.div variants={itemVariants} className="space-y-6">
+        {/* Right Column - Secondary Context */}
+        <motion.div variants={itemVariants} className="space-y-8">
           <CalendarWidget />
 
-          <h2 className="text-lg font-semibold text-primary">My Notes</h2>
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            className="bg-yellow-50/50 border border-yellow-100 p-4 rounded-lg min-h-[200px] relative shadow-sm transition-all"
-          >
-            <p className="text-sm text-yellow-800/60 font-medium mb-3 flex items-center gap-2">
-              <FileText size={14} /> Quick Scratchpad
-            </p>
-            <ul className="list-disc pl-4 space-y-2 text-sm text-secondary">
-              <li>Update CV with new project</li>
-              <li>Research interview questions for Tokopedia</li>
-              <li>Check scholarship deadline</li>
-            </ul>
-            <div className="absolute bottom-4 right-4 text-xs text-secondary/50">
-              Editable (Mock)
+          <motion.div className="bg-surface border border-surface-border rounded-xl shadow-sm overflow-hidden">
+            <div className="p-4 border-b border-surface-border bg-surface-muted/30">
+              <h2 className="font-bold text-text flex items-center gap-2 text-sm">
+                <FileText size={16} className="text-text-muted" /> Quick Notes
+              </h2>
+            </div>
+            <div className="p-4 bg-yellow-50/30">
+              <ul className="list-inside list-disc space-y-2 text-sm text-text-muted font-medium">
+                <li>Update CV with new dashboard project</li>
+                <li>Research interview questions for startup roles</li>
+                <li>Check master's degree scholarship deadlines</li>
+              </ul>
+              <div className="mt-6 flex justify-end">
+                <span className="text-[10px] text-text-light font-medium tracking-wide uppercase">Private Scratchpad</span>
+              </div>
             </div>
           </motion.div>
         </motion.div>

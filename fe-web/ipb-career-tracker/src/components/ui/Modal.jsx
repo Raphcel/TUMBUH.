@@ -61,16 +61,16 @@ export function Modal({
                 >
                     <motion.div
                         ref={modalRef}
-                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        initial={{ opacity: 0, scale: 0.98, y: 10 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        transition={{ duration: 0.2 }}
-                        className={`bg-white rounded-xl shadow-xl w-full overflow-hidden relative flex flex-col max-h-[90vh] ${sizeClasses[size]} ${className}`}
+                        exit={{ opacity: 0, scale: 0.98, y: 10 }}
+                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                        className={`bg-surface rounded-xl shadow-xl border border-surface-border w-full overflow-hidden relative flex flex-col max-h-[90vh] ${sizeClasses[size]} ${className}`}
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Header */}
-                        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 flex-shrink-0">
-                            <h3 className="text-lg font-bold text-gray-900">{title}</h3>
+                        <div className="p-6 border-b border-surface-border flex justify-between items-center bg-surface-muted/50 flex-shrink-0">
+                            <h3 className="text-lg font-bold text-text">{title}</h3>
                             <button
                                 onClick={onClose}
                                 className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-md hover:bg-gray-200/50"
@@ -86,7 +86,7 @@ export function Modal({
 
                         {/* Footer */}
                         {footer && (
-                            <div className="p-6 border-t border-gray-100 bg-gray-50/30 flex justify-end gap-3 flex-shrink-0">
+                            <div className="p-6 border-t border-surface-border bg-surface-muted/30 flex justify-end gap-3 flex-shrink-0">
                                 {footer}
                             </div>
                         )}

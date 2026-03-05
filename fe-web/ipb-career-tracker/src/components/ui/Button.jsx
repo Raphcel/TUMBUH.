@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const variants = {
-  primary: "bg-primary text-white hover:opacity-90 shadow-sm",
-  secondary: "bg-gray-100 text-primary hover:bg-gray-200",
-  outline: "border border-gray-300 text-primary hover:bg-highlight/50",
-  ghost: "text-secondary hover:bg-highlight/30 hover:text-primary",
+  primary: "bg-brand text-white hover:bg-brand-light shadow-sm",
+  secondary: "bg-surface-muted text-brand hover:bg-surface-border",
+  outline: "border border-surface-border text-brand hover:bg-surface-muted/50",
+  ghost: "text-text-muted hover:bg-surface-muted hover:text-brand",
   danger: "bg-red-600 text-white hover:bg-red-700",
 };
 
@@ -33,11 +33,11 @@ export function Button({
 
   const combinedClassName = `${baseStyles} ${variantStyles} ${sizeStyles} ${className}`;
 
-  // Framer Motion props for hover effect
+  // Framer Motion props for subtle hover effect
   const motionProps = {
-    whileHover: { scale: 1.05 },
-    whileTap: { scale: 0.95 },
-    transition: { type: "spring", stiffness: 400, damping: 17 }
+    whileHover: { scale: 1.02 },
+    whileTap: { scale: 0.98 },
+    transition: { type: "spring", stiffness: 500, damping: 30 }
   };
 
   if (to) {

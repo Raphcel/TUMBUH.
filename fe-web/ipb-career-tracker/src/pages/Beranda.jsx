@@ -93,7 +93,7 @@ export function Beranda() {
                   type="text"
                   name="q"
                   className="w-full border-transparent pl-4 py-4 rounded-xl placeholder:text-gray-400 sm:text-lg sm:leading-6 shadow-2xl bg-white backdrop-blur-md text-primary transition-all focus:outline-none focus:ring-0 focus:border-transparent"
-                  placeholder="Search for jobs, internships, or scholarships..."
+                  placeholder="Search for jobs, internships, or anything..."
                 />
                 <div className="absolute inset-y-2 right-2">
                   <button type="submit" className="h-full px-6 bg-[#0f2854] hover:bg-[#1a3a70] text-white font-semibold rounded-lg shadow-md transition-colors">

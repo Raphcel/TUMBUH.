@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Card, CardBody } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -21,13 +21,24 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export function Lowongan() {
   const { user } = useAuth();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [showFilters, setShowFilters] = useState(false);
   const [savedJobs, setSavedJobs] = useState([]);
 
-  const [filterType, setFilterType] = useState('All');
-  const [filterLocation, setFilterLocation] = useState('All');
-  const [filterCompany, setFilterCompany] = useState('All');
+  const [filterType, setFilterType] = useState(searchParams.get('type') || 'All');
+  const [filterLocation, setFilterLocation] = useState(searchParams.get('location') || 'All');
+  const [filterCompany, setFilterCompany] = useState(searchParams.get('company') || 'All');
+
+  useEffect(() => {
+    const params = {};
+    if (searchTerm) params.q = searchTerm;
+    if (filterType !== 'All') params.type = filterType;
+    if (filterLocation !== 'All') params.location = filterLocation;
+    if (filterCompany !== 'All') params.company = filterCompany;
+    setSearchParams(params, { replace: true });
+  }, [searchTerm, filterType, filterLocation, filterCompany, setSearchParams]);
 
   const [allOpportunities, setAllOpportunities] = useState([]);
   const [allCompanies, setAllCompanies] = useState([]);

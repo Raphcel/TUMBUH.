@@ -14,8 +14,10 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
+import { UserMenu } from './UserMenu';
+import { Menu } from 'lucide-react';
 
-export function TopLayout() {
+export function TopLayout({ onMenuClick }) {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -52,11 +54,6 @@ export function TopLayout() {
 
     const unreadCount = notifications.filter(n => !n.read).length;
 
-    const handleLogout = () => {
-        logout();
-        navigate('/');
-    };
-
     const handleNotificationClick = (notification) => {
         setSelectedNotification(notification);
         // Mark as read mock
@@ -76,14 +73,23 @@ export function TopLayout() {
 
     return (
         <>
-            <div className="h-16 bg-white border-b border-gray-200 flex items-center justify-end px-8 sticky top-0 z-30 shadow-sm">
-                <div className="flex items-center gap-6">
+            <div className="h-16 bg-surface border-b border-surface-border flex items-center justify-between lg:justify-end px-4 sm:px-6 lg:px-8 sticky top-0 z-30 shadow-sm">
+
+                {/* Mobile Menu Toggle */}
+                <button
+                    onClick={onMenuClick}
+                    className="lg:hidden p-2 -ml-2 text-text-muted hover:text-text hover:bg-surface-muted rounded-lg transition-colors"
+                >
+                    <Menu size={24} />
+                </button>
+
+                <div className="flex items-center gap-4 sm:gap-6">
                     {/* Notifications */}
                     <div className="relative">
                         <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="text-secondary hover:text-primary transition-colors relative p-1"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="text-text-muted hover:text-text transition-colors relative p-1.5 rounded-lg hover:bg-surface-muted"
                             onClick={() => {
                                 setShowNotifications(!showNotifications);
                                 setShowProfileMenu(false);
@@ -147,7 +153,7 @@ export function TopLayout() {
                                                     </div>
                                                 ))
                                             ) : (
-                                                <div className="px-4 py-8 text-center text-sm text-secondary">
+                                                <div className="px-4 py-8 text-center text-sm text-text-muted">
                                                     No notifications
                                                 </div>
                                             )}
@@ -158,66 +164,8 @@ export function TopLayout() {
                         </AnimatePresence>
                     </div>
 
-                    {/* Profile */}
-                    <div className="relative">
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex items-center gap-2 hover:bg-gray-50 p-1.5 rounded-lg transition-colors"
-                            onClick={() => {
-                                setShowProfileMenu(!showProfileMenu);
-                                setShowNotifications(false);
-                            }}
-                        >
-                            <img
-                                src={user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.first_name || 'User')}&background=0f2854&color=fff`}
-                                alt="Profile"
-                                className="w-8 h-8 rounded-full border border-gray-200"
-                            />
-                            <div className="text-left hidden md:block">
-                                <p className="text-xs font-semibold text-primary">{user?.first_name || 'User'}</p>
-                                <p className="text-[10px] text-secondary capitalize">{user?.role || 'Guest'}</p>
-                            </div>
-                        </motion.button>
-
-                        <AnimatePresence>
-                            {showProfileMenu && (
-                                <>
-                                    <div
-                                        className="fixed inset-0 z-40"
-                                        onClick={() => setShowProfileMenu(false)}
-                                    />
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: 10 }}
-                                        className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-50"
-                                    >
-                                        <Link
-                                            to="/student/profile"
-                                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
-                                            onClick={() => setShowProfileMenu(false)}
-                                        >
-                                            <User size={16} /> Profile
-                                        </Link>
-                                        <button
-                                            className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors text-left"
-                                            onClick={() => alert('Settings coming soon')}
-                                        >
-                                            <Settings size={16} /> Settings
-                                        </button>
-                                        <div className="h-px bg-gray-100 my-1"></div>
-                                        <button
-                                            onClick={handleLogout}
-                                            className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
-                                        >
-                                            <LogOut size={16} /> Logout
-                                        </button>
-                                    </motion.div>
-                                </>
-                            )}
-                        </AnimatePresence>
-                    </div>
+                    {/* Unified Profile Menu */}
+                    <UserMenu />
                 </div>
             </div>
 
@@ -254,7 +202,7 @@ export function TopLayout() {
                         </div>
                     </div>
                 )}
-            </Modal>
+            </Modal >
         </>
     );
 }
